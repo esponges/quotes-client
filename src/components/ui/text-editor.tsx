@@ -80,11 +80,76 @@ export const TextEditor: React.FC = () => {
           />
         </Tab>
         <Tab label='Preview'>
-          <div className='border rounded p-4 prose'>
+          <div className='border rounded p-4 markdown-preview'>
             <ReactMarkdown>{entry}</ReactMarkdown>
           </div>
         </Tab>
       </Tabs>
+      <style jsx global>{`
+        .markdown-preview h1 {
+          font-size: 2em;
+          font-weight: bold;
+          margin-top: 0.67em;
+          margin-bottom: 0.67em;
+        }
+        .markdown-preview h2 {
+          font-size: 1.5em;
+          font-weight: bold;
+          margin-top: 0.83em;
+          margin-bottom: 0.83em;
+        }
+        .markdown-preview h3 {
+          font-size: 1.17em;
+          font-weight: bold;
+          margin-top: 1em;
+          margin-bottom: 1em;
+        }
+        .markdown-preview h4 {
+          font-size: 1em;
+          font-weight: bold;
+          margin-top: 1.33em;
+          margin-bottom: 1.33em;
+        }
+        .markdown-preview h5 {
+          font-size: 0.83em;
+          font-weight: bold;
+          margin-top: 1.67em;
+          margin-bottom: 1.67em;
+        }
+        .markdown-preview h6 {
+          font-size: 0.67em;
+          font-weight: bold;
+          margin-top: 2.33em;
+          margin-bottom: 2.33em;
+        }
+        .markdown-preview p {
+          margin-top: 1em;
+          margin-bottom: 1em;
+        }
+        .markdown-preview ul,
+        .markdown-preview ol {
+          padding-left: 2em;
+          margin-top: 1em;
+          margin-bottom: 1em;
+        }
+        .markdown-preview blockquote {
+          border-left: 4px solid #ccc;
+          margin: 1em 0;
+          padding-left: 1em;
+          color: #666;
+        }
+        .markdown-preview pre {
+          background-color: #f4f4f4;
+          padding: 1em;
+          border-radius: 4px;
+          overflow-x: auto;
+        }
+        .markdown-preview code {
+          background-color: #f4f4f4;
+          padding: 0.2em 0.4em;
+          border-radius: 3px;
+        }
+      `}</style>
     </div>
   );
 };
