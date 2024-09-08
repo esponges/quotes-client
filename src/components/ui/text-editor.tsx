@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, ReactNode } from 'react';
+import React, { ReactNode } from 'react';
 import ReactMarkdown from 'react-markdown';
 
 type TextareaProps = {
@@ -36,7 +36,7 @@ type TabsProps = {
 };
 
 const Tabs: React.FC<TabsProps> = ({ children }) => {
-  const [activeTab, setActiveTab] = useState<string>(children[0].props.label);
+  const [activeTab, setActiveTab] = React.useState<string>(children[0].props.label);
 
   return (
     <div>
@@ -61,10 +61,51 @@ const Tabs: React.FC<TabsProps> = ({ children }) => {
 };
 
 export const TextEditor: React.FC = () => {
-  const [entry, setEntry] = useState<string>('');
+  const [entry, setEntry] = React.useState<string>('');
+  const [workerReady, setWorkerReady] = React.useState<boolean>(false);
+  const workerRef = React.useRef<Worker | null>(null);
+
+    // We use the `useEffect` hook to set up the worker as soon as the `App` component is mounted.
+    React.useEffect(() => {
+      if (!workerRef.current) {
+        console.log('Creating worker');
+        // Create the worker if it does not yet exist.
+        workerRef.current = new Worker(new URL('../worker/spellcheck.js', import.meta.url), {
+          type: 'module'
+        });
+      }
+  
+      // Create a callback function for messages from the worker thread.
+      const onMessageReceived = (e: MessageEvent) => {
+        switch (e.data.status) {
+          case 'initiate':
+            console.log('initiate');
+            setWorkerReady(false);
+            break;
+          case 'ready':
+            console.log('ready');
+            setWorkerReady(true);
+            break;
+          // case 'complete':
+          //   setResult(e.data.output[0])
+          //   break;
+        }
+      };
+  
+      // Attach the callback function as an event listener.
+      workerRef.current.addEventListener('message', onMessageReceived);
+      console.log('adding event listener', { workerRef });
+  
+      // Define a cleanup function for when the component is unmounted.
+      return () => workerRef.current?.removeEventListener('message', onMessageReceived);
+    }, []);
+
+  console.log({ workerReady, workerRef });
 
   const handleEntryChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setEntry(e.target.value);
+    // TODO: initialize message differently
+    workerRef.current?.postMessage({ text: e.target.value });
   };
 
   return (
